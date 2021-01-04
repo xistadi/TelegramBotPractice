@@ -51,7 +51,7 @@ def get_age(message):
         bot.register_next_step_handler(message, get_age)
     else:
         keyboard = types.InlineKeyboardMarkup() #наша клавиатура
-        key_yes = types.InlineKeyboardButton(text='Да', callback_data='yes')
+        key_yes = types.InlineKeyboardButton(text='Да', callback_data='yes', url="https://ya.ru")
         keyboard.add(key_yes)
         key_no= types.InlineKeyboardButton(text='Нет', callback_data='no')
         keyboard.add(key_no)
