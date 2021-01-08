@@ -8,4 +8,4 @@ def repeat_all_messages(message): # Название функции не игр�
     bot.send_message(message.chat.id, message.text)
 
 if __name__ == '__main__':
-     bot.infinity_polling()
+    bot.infinity_polling()
