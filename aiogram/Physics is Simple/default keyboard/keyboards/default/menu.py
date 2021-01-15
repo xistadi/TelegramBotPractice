@@ -9,6 +9,9 @@ menu = ReplyKeyboardMarkup(
             KeyboardButton(text="Макарошки"),
             KeyboardButton(text="Пюрешка")
         ],
+        [
+            KeyboardButton(text='Kekw')
+        ]
     ],
     resize_keyboard=True
 )
