@@ -1,6 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
+from loader import logging, bot
 
 from loader import dp
 from states.test import Test
@@ -24,27 +25,31 @@ async def enter_test(message: types.Message):
 async def answer_q1(message: types.Message, state: FSMContext):
     answer = message.text
 
-    # Ваирант 2 получения state
-    # state = dp.current_state(chat=message.chat.id, user=message.from_user.id)
+    if not answer.lower().startswith('да') and not answer.lower().startswith('нет'):
+        await message.answer('Долбаеб ответь да или нет!')
+        await Test.Q1.set()
+    else:
+        # Ваирант 2 получения state
+        # state = dp.current_state(chat=message.chat.id, user=message.from_user.id)
 
-    # Вариант 1 сохранения переменных - записываем через key=var
-    await state.update_data(answer1=answer)
+        # Вариант 1 сохранения переменных - записываем через key=var
+        await state.update_data(answer1=answer)
 
-    # Вариант 2 - передаем как словарь
-    await state.update_data(
-        {"answer1": answer}
-    )
+        # Вариант 2 - передаем как словарь
+        await state.update_data(
+            {"answer1": answer}
+        )
 
-    # Вариант 3 - через state.proxy
-    async with state.proxy() as data:
-        data["answer1"] = answer
-        # Удобно, если нужно сделать data["some_digit"] += 1
-        # Или data["some_list"].append(1), т.к. не нужно сначала доставать из стейта, А потом задавать
+        # Вариант 3 - через state.proxy
+        async with state.proxy() as data:
+            data["answer1"] = answer
+            # Удобно, если нужно сделать data["some_digit"] += 1
+            # Или data["some_list"].append(1), т.к. не нужно сначала доставать из стейта, А потом задавать
 
-    await message.answer("Вопрос №2. \n\n"
-                         "Ваша память ухудшилась и вы помните то, что было давно, но забываете недавние события?")
+        await message.answer("Вопрос №2. \n\n"
+                             "Ваша память ухудшилась и вы помните то, что было давно, но забываете недавние события?")
 
-    await Test.next()
+        await Test.next()
 
 
 @dp.message_handler(state=Test.Q2)
@@ -54,10 +59,24 @@ async def answer_q2(message: types.Message, state: FSMContext):
     answer1 = data.get("answer1")
     answer2 = message.text
 
-    await message.answer("Спасибо за ваши ответы!")
+    if not answer2.lower().startswith('да') and not answer2.lower().startswith('нет'):
+        await message.answer('Долбаеб ответь да или нет!')
+        await Test.Q2.set()
+    else:
+        if answer1.lower().startswith('да') and answer2.lower().startswith('да'):
+            await message.answer(f"Поздравляем, вы шизофреник! \n"
+                                 f"Ответы: \n"
+                                 f"1. {answer1}! \n"
+                                 f"2. {answer2}! \n")
+        else:
+            await message.answer(f"Поздравляем, но вы все равно шизофреник! \n"
+                                 f"Ответы: \n"
+                                 f"1. {answer1}! \n"
+                                 f"2. {answer2}! \n")
+        await message.answer("Спасибо за ваши ответы!")
 
     # Вариант 1
-    await state.finish()
+        await state.finish()
 
     # Вариант завершения 2
     # await state.reset_state()
